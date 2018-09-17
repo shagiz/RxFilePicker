@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-const val TEMP_FILE = "temp_file"
+
 
 fun getPath(context: Context, uri: Uri): String? {
     if ("content".equals(uri.scheme, ignoreCase = true)) {
@@ -77,7 +77,8 @@ fun saveTempFileUri(context: Context, uri: Uri): ExtFile {
     Log.d("QWERTY", "$name, $ext, $mimeType")
 
     val inputStream = context.contentResolver.openInputStream(uri)
-    val file = File(context.filesDir, TEMP_FILE)
+    var fileName = fileNameGenerator()
+    val file = File(context.filesDir, fileName)
     val outputStream = FileOutputStream(file)
 
     val buffer = ByteArray(inputStream.available())
@@ -91,9 +92,17 @@ fun saveTempFileUri(context: Context, uri: Uri): ExtFile {
     return ExtFile(file, uri, name, ext, mimeType)
 }
 
+fun fileNameGenerator(): String? {
+    var formatter = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US)
+    var now = Date()
+    var fileName = formatter.format(now)
+    return fileName
+}
+
 fun saveTempBitmap(context: Context, bitmap: Bitmap): ExtFile {
 
-    val imageFile = File(context.filesDir, TEMP_FILE)
+    var fileName = fileNameGenerator()
+    val imageFile = File(context.filesDir, fileName)
 
     ByteArrayOutputStream().use {
         val byteOutput = it;
